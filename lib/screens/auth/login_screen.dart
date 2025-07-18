@@ -75,6 +75,16 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     }
   }
 
+  Future<void> _loginWithGoogle() async {
+    // TODO: Implement Google login
+    print('Google login tapped');
+  }
+
+  Future<void> _loginWithFacebook() async {
+    // TODO: Implement Facebook login
+    print('Facebook login tapped');
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -248,6 +258,130 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                             ),
                                           ),
                                   ),
+                                ),
+                                const SizedBox(height: 24),
+
+                                // Divider with "or sign in with"
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Divider(
+                                        color: Colors.grey[300],
+                                        thickness: 1,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                                      child: Text(
+                                        'or sign in with',
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Divider(
+                                        color: Colors.grey[300],
+                                        thickness: 1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 24),
+
+                                // Social Login Buttons
+                                Row(
+                                  children: [
+                                    // Google Button
+                                    Expanded(
+                                      child: Container(
+                                        height: 56,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: Colors.grey[300]!),
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: Material(
+                                          color: Colors.transparent,
+                                          child: InkWell(
+                                            onTap: _loginWithGoogle,
+                                            borderRadius: BorderRadius.circular(12),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Container(
+                                                  width: 24,
+                                                  height: 24,
+                                                  decoration: const BoxDecoration(
+                                                    image: DecorationImage(
+                                                      image: NetworkImage(
+                                                        'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png',
+                                                      ),
+                                                      fit: BoxFit.contain,
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                const Text(
+                                                  'Google',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Color(0xFF1E293B),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    // Facebook Button
+                                    Expanded(
+                                      child: Container(
+                                        height: 56,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: Colors.grey[300]!),
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: Material(
+                                          color: Colors.transparent,
+                                          child: InkWell(
+                                            onTap: _loginWithFacebook,
+                                            borderRadius: BorderRadius.circular(12),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Container(
+                                                  width: 24,
+                                                  height: 24,
+                                                  decoration: BoxDecoration(
+                                                    color: const Color(0xFF1877F2),
+                                                    borderRadius: BorderRadius.circular(4),
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.facebook,
+                                                    color: Colors.white,
+                                                    size: 18,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                const Text(
+                                                  'Facebook',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Color(0xFF1E293B),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: 24),
 

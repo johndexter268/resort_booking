@@ -415,7 +415,7 @@ class _AdminMainScreenState extends State<AdminMainScreen>
           ),
         ],
       ),
-      // Bottom Navigation for Mobile
+      // Bottom Navigation for Mobile - Now shows all 7 items
       bottomNavigationBar: isMobile
           ? Container(
               decoration: BoxDecoration(
@@ -441,13 +441,12 @@ class _AdminMainScreenState extends State<AdminMainScreen>
                 backgroundColor: Colors.white,
                 selectedItemColor: const Color(0xFF3B82F6),
                 unselectedItemColor: const Color(0xFF94A3B8),
-                selectedFontSize: 12,
-                unselectedFontSize: 12,
-                items: _menuItems.take(5).map((item) {
-                  final index = _menuItems.indexOf(item);
+                selectedFontSize: 10,
+                unselectedFontSize: 10,
+                items: _menuItems.map((item) {
                   return BottomNavigationBarItem(
-                    icon: Icon(item['icon']),
-                    activeIcon: Icon(item['activeIcon']),
+                    icon: Icon(item['icon'], size: 20),
+                    activeIcon: Icon(item['activeIcon'], size: 20),
                     label: item['title'],
                   );
                 }).toList(),

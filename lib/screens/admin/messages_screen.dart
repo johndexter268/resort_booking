@@ -81,12 +81,31 @@ class _AdminMessagesScreenState extends State<AdminMessagesScreen> {
     _messageController.clear();
   }
 
+  bool get _isMobile => MediaQuery.of(context).size.width < 768;
+
+  void _selectConversation(String userId, String userName) {
+    setState(() {
+      selectedUserId = userId;
+      selectedUserName = userName;
+    });
+    _loadMessages(userId);
+  }
+
+  void _backToConversationsList() {
+    setState(() {
+      selectedUserId = null;
+      selectedUserName = null;
+    });
+  }
+
   Widget _buildConversationsList() {
     return Container(
-      width: 320,
-      decoration: const BoxDecoration(
-        color: Color(0xFFF8FAFC),
-        border: Border(right: BorderSide(color: Color(0xFFE2E8F0))),
+      width: _isMobile ? double.infinity : 320,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF8FAFC),
+        border: _isMobile 
+            ? null 
+            : const Border(right: BorderSide(color: Color(0xFFE2E8F0))),
       ),
       child: Column(
         children: [
@@ -206,7 +225,7 @@ class _AdminMessagesScreenState extends State<AdminMessagesScreen> {
                               selectedConversation = conversation;
                               selectedUserName = otherUserName;
                             });
-                            _loadMessages(otherUserId);
+                            _selectConversation(otherUserId, otherUserName);
                           },
                         ),
                       );
@@ -220,19 +239,20 @@ class _AdminMessagesScreenState extends State<AdminMessagesScreen> {
 
   Widget _buildChatArea() {
     if (selectedUserId == null) {
-      return const Expanded(
+      return Expanded(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.chat, size: 64, color: Color(0xFF94A3B8)),
-              SizedBox(height: 16),
+              const Icon(Icons.chat, size: 64, color: Color(0xFF94A3B8)),
+              const SizedBox(height: 16),
               Text(
                 'Select a conversation to start messaging',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   color: Color(0xFF64748B),
                 ),
+                textAlign: TextAlign.center,
               ),
             ],
           ),
@@ -252,6 +272,11 @@ class _AdminMessagesScreenState extends State<AdminMessagesScreen> {
             ),
             child: Row(
               children: [
+                if (_isMobile)
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Color(0xFF2563EB)),
+                    onPressed: _backToConversationsList,
+                  ),
                 CircleAvatar(
                   backgroundColor: const Color(0xFF2563EB),
                   child: Text(
@@ -260,12 +285,14 @@ class _AdminMessagesScreenState extends State<AdminMessagesScreen> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  selectedUserName ?? '',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF1E293B),
+                Expanded(
+                  child: Text(
+                    selectedUserName ?? '',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF1E293B),
+                    ),
                   ),
                 ),
               ],
@@ -297,7 +324,11 @@ class _AdminMessagesScreenState extends State<AdminMessagesScreen> {
                           child: Container(
                             margin: const EdgeInsets.only(bottom: 12),
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            constraints: const BoxConstraints(maxWidth: 300),
+                            constraints: BoxConstraints(
+                              maxWidth: _isMobile 
+                                  ? MediaQuery.of(context).size.width * 0.8
+                                  : 300,
+                            ),
                             decoration: BoxDecoration(
                               color: isMe ? const Color(0xFF2563EB) : Colors.white,
                               borderRadius: BorderRadius.circular(16),
@@ -338,43 +369,45 @@ class _AdminMessagesScreenState extends State<AdminMessagesScreen> {
           
           // Message Input
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(_isMobile ? 12 : 16),
             decoration: const BoxDecoration(
               color: Colors.white,
               border: Border(top: BorderSide(color: Color(0xFFE2E8F0))),
             ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    decoration: InputDecoration(
-                      hintText: 'Type a message...',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24),
-                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+            child: SafeArea(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _messageController,
+                      decoration: InputDecoration(
+                        hintText: 'Type a message...',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: const BorderSide(color: Color(0xFF2563EB)),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24),
-                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24),
-                        borderSide: const BorderSide(color: Color(0xFF2563EB)),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      onSubmitted: (_) => _sendMessage(),
                     ),
-                    onSubmitted: (_) => _sendMessage(),
                   ),
-                ),
-                const SizedBox(width: 12),
-                FloatingActionButton(
-                  onPressed: _sendMessage,
-                  mini: true,
-                  backgroundColor: const Color(0xFF2563EB),
-                  child: const Icon(Icons.send, color: Colors.white),
-                ),
-              ],
+                  const SizedBox(width: 12),
+                  FloatingActionButton(
+                    onPressed: _sendMessage,
+                    mini: true,
+                    backgroundColor: const Color(0xFF2563EB),
+                    child: const Icon(Icons.send, color: Colors.white),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -392,31 +425,30 @@ class _AdminMessagesScreenState extends State<AdminMessagesScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('New Message'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Select a customer to message:'),
-            const SizedBox(height: 16),
-            ...otherUsers.map((user) => ListTile(
-              leading: CircleAvatar(
-                backgroundColor: const Color(0xFF2563EB),
-                child: Text(
-                  user['name'].substring(0, 1).toUpperCase(),
-                  style: const TextStyle(color: Colors.white),
+        content: SizedBox(
+          width: _isMobile ? double.maxFinite : null,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Select a customer to message:'),
+              const SizedBox(height: 16),
+              ...otherUsers.map((user) => ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: const Color(0xFF2563EB),
+                  child: Text(
+                    user['name'].substring(0, 1).toUpperCase(),
+                    style: const TextStyle(color: Colors.white),
+                  ),
                 ),
-              ),
-              title: Text(user['name']),
-              subtitle: Text(user['email']),
-              onTap: () {
-                Navigator.pop(context);
-                setState(() {
-                  selectedUserId = user['id'];
-                  selectedUserName = user['name'];
-                });
-                _loadMessages(user['id']);
-              },
-            )),
-          ],
+                title: Text(user['name']),
+                subtitle: Text(user['email']),
+                onTap: () {
+                  Navigator.pop(context);
+                  _selectConversation(user['id'], user['name']);
+                },
+              )),
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -452,11 +484,19 @@ class _AdminMessagesScreenState extends State<AdminMessagesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        _buildConversationsList(),
-        _buildChatArea(),
-      ],
-    );
+    if (_isMobile) {
+      // Mobile layout - show either conversations list or chat area
+      return selectedUserId == null
+          ? _buildConversationsList()
+          : _buildChatArea();
+    } else {
+      // Desktop layout - show both side by side
+      return Row(
+        children: [
+          _buildConversationsList(),
+          _buildChatArea(),
+        ],
+      );
+    }
   }
 }

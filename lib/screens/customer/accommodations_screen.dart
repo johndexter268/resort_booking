@@ -141,29 +141,90 @@ class _CustomerAccommodationsScreenState extends State<CustomerAccommodationsScr
   }
 
   Widget _buildNavigationSection(bool isDesktop) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 768;
+    
     return Container(
       color: Colors.white,
       child: Column(
         children: [
+          // Search Bar Section
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: isDesktop ? 48 : 24,
               vertical: isDesktop ? 24 : 16,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildTabButtons(isDesktop),
-                _buildFilterControls(isDesktop),
-              ],
-            ),
+            child: _buildSearchBar(isDesktop),
           ),
+          
+          // Navigation Controls Section
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: isDesktop ? 48 : 24,
+              vertical: isDesktop ? 16 : 12,
+            ),
+            child: isMobile 
+                ? _buildMobileNavigation(isDesktop)
+                : _buildDesktopNavigation(isDesktop),
+          ),
+          
           Container(
             height: 1,
             color: Colors.grey.shade200,
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildDesktopNavigation(bool isDesktop) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _buildTabButtons(isDesktop),
+        _buildFilterControls(isDesktop),
+      ],
+    );
+  }
+
+  Widget _buildMobileNavigation(bool isDesktop) {
+    return Column(
+      children: [
+        // Tab buttons at the top
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildTabButton(
+              'Rooms',
+              Icons.hotel_outlined,
+              Icons.hotel,
+              0,
+              isDesktop,
+            ),
+            const SizedBox(width: 16),
+            _buildTabButton(
+              'Cottages',
+              Icons.cottage_outlined,
+              Icons.cottage,
+              1,
+              isDesktop,
+            ),
+          ],
+        ),
+        
+        const SizedBox(height: 16),
+        
+        // Filter controls below tabs
+        Row(
+          children: [
+            Expanded(
+              child: _buildDropdownFilter(isDesktop),
+            ),
+            const SizedBox(width: 12),
+            _buildAvailabilityFilter(isDesktop),
+          ],
+        ),
+      ],
     );
   }
 
@@ -191,14 +252,16 @@ class _CustomerAccommodationsScreenState extends State<CustomerAccommodationsScr
 
   Widget _buildTabButton(String title, IconData outlinedIcon, IconData filledIcon, int index, bool isDesktop) {
     final isSelected = _tabController.index == index;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 768;
     
     return GestureDetector(
       onTap: () => _tabController.animateTo(index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.symmetric(
-          horizontal: isDesktop ? 24 : 16,
-          vertical: isDesktop ? 12 : 8,
+          horizontal: isMobile ? 12 : (isDesktop ? 24 : 16),
+          vertical: isMobile ? 8 : (isDesktop ? 12 : 8),
         ),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFF3B82F6) : Colors.transparent,
@@ -213,14 +276,14 @@ class _CustomerAccommodationsScreenState extends State<CustomerAccommodationsScr
             Icon(
               isSelected ? filledIcon : outlinedIcon,
               color: isSelected ? Colors.white : Colors.grey.shade600,
-              size: isDesktop ? 20 : 18,
+              size: isMobile ? 16 : (isDesktop ? 20 : 18),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 6),
             Text(
               title,
               style: TextStyle(
                 color: isSelected ? Colors.white : Colors.grey.shade600,
-                fontSize: isDesktop ? 16 : 14,
+                fontSize: isMobile ? 12 : (isDesktop ? 16 : 14),
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               ),
             ),
@@ -241,6 +304,9 @@ class _CustomerAccommodationsScreenState extends State<CustomerAccommodationsScr
   }
 
   Widget _buildDropdownFilter(bool isDesktop) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 768;
+    
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade300),
@@ -252,26 +318,45 @@ class _CustomerAccommodationsScreenState extends State<CustomerAccommodationsScr
         underline: const SizedBox(),
         icon: const Icon(Icons.keyboard_arrow_down),
         padding: EdgeInsets.symmetric(
-          horizontal: isDesktop ? 16 : 12,
-          vertical: isDesktop ? 8 : 6,
+          horizontal: isMobile ? 8 : (isDesktop ? 16 : 12),
+          vertical: isMobile ? 6 : (isDesktop ? 8 : 6),
         ),
-        items: const [
-          DropdownMenuItem(value: 'name', child: Text('Sort by Name')),
-          DropdownMenuItem(value: 'price_low', child: Text('Price: Low to High')),
-          DropdownMenuItem(value: 'price_high', child: Text('Price: High to Low')),
-          DropdownMenuItem(value: 'availability', child: Text('Availability')),
+        style: TextStyle(
+          fontSize: isMobile ? 12 : (isDesktop ? 14 : 13),
+          color: Colors.grey.shade700,
+        ),
+        items: [
+          DropdownMenuItem(
+            value: 'name', 
+            child: Text(isMobile ? 'Name' : 'Sort by Name')
+          ),
+          DropdownMenuItem(
+            value: 'price_low', 
+            child: Text(isMobile ? 'Price ↑' : 'Price: Low to High')
+          ),
+          DropdownMenuItem(
+            value: 'price_high', 
+            child: Text(isMobile ? 'Price ↓' : 'Price: High to Low')
+          ),
+          DropdownMenuItem(
+            value: 'availability', 
+            child: Text(isMobile ? 'Available' : 'Availability')
+          ),
         ],
       ),
     );
   }
 
   Widget _buildAvailabilityFilter(bool isDesktop) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 768;
+    
     return GestureDetector(
       onTap: () => setState(() => _showAvailableOnly = !_showAvailableOnly),
       child: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: isDesktop ? 16 : 12,
-          vertical: isDesktop ? 12 : 10,
+          horizontal: isMobile ? 8 : (isDesktop ? 16 : 12),
+          vertical: isMobile ? 10 : (isDesktop ? 12 : 10),
         ),
         decoration: BoxDecoration(
           color: _showAvailableOnly ? const Color(0xFF3B82F6) : Colors.white,
@@ -286,14 +371,14 @@ class _CustomerAccommodationsScreenState extends State<CustomerAccommodationsScr
             Icon(
               _showAvailableOnly ? Icons.check_circle : Icons.circle_outlined,
               color: _showAvailableOnly ? Colors.white : Colors.grey.shade600,
-              size: 18,
+              size: isMobile ? 16 : 18,
             ),
-            const SizedBox(width: 6),
+            SizedBox(width: isMobile ? 4 : 6),
             Text(
-              'Available Only',
+              isMobile ? 'Available' : 'Available Only',
               style: TextStyle(
                 color: _showAvailableOnly ? Colors.white : Colors.grey.shade600,
-                fontSize: isDesktop ? 14 : 12,
+                fontSize: isMobile ? 11 : (isDesktop ? 14 : 12),
                 fontWeight: FontWeight.w500,
               ),
             ),

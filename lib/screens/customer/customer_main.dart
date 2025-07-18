@@ -87,7 +87,7 @@ class _CustomerMainScreenState extends State<CustomerMainScreen>
           if (isTablet) _buildDesktopLayout() else _buildMobileLayout(),
           // Floating Chat Bubble
           Positioned(
-            bottom: isMobile ? 90 : 24,
+            bottom: isMobile ? 50 : 16,
             right: 24,
             child: const ChatBubble(),
           ),
@@ -317,61 +317,61 @@ class _CustomerMainScreenState extends State<CustomerMainScreen>
   }
 
   List<PopupMenuItem<int>> _buildDesktopPopupNavigation() {
-  return _menuItems.asMap().entries.map((entry) {
-    final index = entry.key;
-    final item = entry.value;
-    final isSelected = _selectedIndex == index;
+    return _menuItems.asMap().entries.map((entry) {
+      final index = entry.key;
+      final item = entry.value;
+      final isSelected = _selectedIndex == index;
 
-    return PopupMenuItem<int>(
-      value: index,  // Pass index as value
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? const Color(0xFF3B82F6).withOpacity(0.1)
-                    : Colors.grey[100],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                isSelected ? item['activeIcon'] : item['icon'],
-                color: isSelected
-                    ? const Color(0xFF3B82F6)
-                    : const Color(0xFF64748B),
-                size: 18,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              item['title'],
-              style: TextStyle(
-                color: isSelected
-                    ? const Color(0xFF3B82F6)
-                    : const Color(0xFF374151),
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                fontSize: 14,
-              ),
-            ),
-            if (isSelected) ...[
-              const Spacer(),
+      return PopupMenuItem<int>(
+        value: index, // Pass index as value
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Row(
+            children: [
               Container(
-                width: 6,
-                height: 6,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF3B82F6),
-                  shape: BoxShape.circle,
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? const Color(0xFF3B82F6).withOpacity(0.1)
+                      : Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  isSelected ? item['activeIcon'] : item['icon'],
+                  color: isSelected
+                      ? const Color(0xFF3B82F6)
+                      : const Color(0xFF64748B),
+                  size: 18,
                 ),
               ),
+              const SizedBox(width: 12),
+              Text(
+                item['title'],
+                style: TextStyle(
+                  color: isSelected
+                      ? const Color(0xFF3B82F6)
+                      : const Color(0xFF374151),
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  fontSize: 14,
+                ),
+              ),
+              if (isSelected) ...[
+                const Spacer(),
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF3B82F6),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
-      ),
-    );
-  }).toList();
-}
+      );
+    }).toList();
+  }
 
   Widget _buildDesktopLayout() {
     return Container(
@@ -379,15 +379,14 @@ class _CustomerMainScreenState extends State<CustomerMainScreen>
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFFF8FAFC),
-            Color(0xFFE2E8F0),
-          ],
+          colors: [Color(0xFFF8FAFC), Color(0xFFE2E8F0)],
         ),
       ),
       child: FadeTransition(
         opacity: _fadeAnimation,
-        child: _selectedIndex == 0 ? _buildDesktopHomeScreen() : _screens[_selectedIndex],
+        child: _selectedIndex == 0
+            ? _buildDesktopHomeScreen()
+            : _screens[_selectedIndex],
       ),
     );
   }
@@ -495,7 +494,112 @@ class _CustomerMainScreenState extends State<CustomerMainScreen>
   Widget _buildMobileLayout() {
     return FadeTransition(
       opacity: _fadeAnimation,
-      child: _screens[_selectedIndex],
+      child: _selectedIndex == 0
+          ? _buildMobileHomeScreen()
+          : _screens[_selectedIndex],
+    );
+  }
+
+  Widget _buildMobileHomeScreen() {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          // Hero Section - Mobile optimized
+          Container(
+            height: MediaQuery.sizeOf(context).height,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(
+                  'https://media.istockphoto.com/id/956431518/photo/aerial-view-of-clear-turquoise-sea.jpg?s=612x612&w=0&k=20&c=VYMqx5i_z8y1BxqSp-08RzIDauWMPuqvz6Vro3frAkI=',
+                ),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.3),
+                    Colors.black.withOpacity(0.6),
+                  ],
+                ),
+              ),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Debbie & Krys Beach Resort',
+                        style: TextStyle(
+                          fontSize: 28, // Smaller for mobile
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              offset: Offset(0, 2),
+                              blurRadius: 4,
+                              color: Colors.black26,
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        'Your Trusted Seaside Retreat for Rest, Reconnection, and Simplicity.',
+                        style: TextStyle(
+                          fontSize: 16, // Smaller for mobile
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              offset: Offset(0, 1),
+                              blurRadius: 2,
+                              color: Colors.black26,
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: () => _onItemTapped(1),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF3B82F6),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 8,
+                          shadowColor: Colors.black.withOpacity(0.3),
+                        ),
+                        child: const Text(
+                          'Book Your Stay',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(24), 
+            child: const CustomerHomeScreen(),
+          ),
+        ],
+      ),
     );
   }
 

@@ -309,16 +309,16 @@ class _ChatBubbleState extends State<ChatBubble> with TickerProviderStateMixin {
             ),
           ),
         
-        // Chat Button
+        
         FloatingActionButton(
   onPressed: _toggleChat,
   backgroundColor: const Color(0xFF2563EB),
   elevation: 4,
-  shape: const CircleBorder(), // Explicitly set circular shape
+  shape: const CircleBorder(), 
   child: Icon(
     _isExpanded ? Icons.close : Icons.chat,
     color: Colors.white,
-    size: 28, // Adjust icon size if needed
+    size: 28, 
   ),
 )
       ],
